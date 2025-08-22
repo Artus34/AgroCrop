@@ -2,12 +2,23 @@ import pickle
 import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware # Import the CORS middleware
 
 # --- 1. Initialize FastAPI App ---
 app = FastAPI(
     title="Crop Recommendation API",
     description="An API to recommend the best crop to plant based on environmental factors.",
     version="1.0.0"
+)
+
+# --- 1.5. Configure CORS ---
+# Add the CORS middleware to your application
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # This allows all origins. You can restrict this to your specific domain.
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"], # Allows all headers
 )
 
 # --- 2. Load Saved Artifacts ---
@@ -94,4 +105,3 @@ def recommend_crop(data: CropInput):
     except Exception as e:
         # For any other errors, return a generic server error
         raise HTTPException(status_code=500, detail=f"An internal server error occurred: {str(e)}")
-
